@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "723416481584",
+    "project_id": "dinnerparty-app",
+    "storage_bucket": "dinnerparty-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:723416481584:android:418e7bfd15840d8ae212f5",
+        "android_client_info": {
+          "package_name": "com.dinnerpartyapp.dinnerparty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "723416481584-oos3jmku0dm89t2dtu22h61usi7e4q51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDgAkIkfpXv7ohPAi5rV4wQ1gXR906Rv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "723416481584-oos3jmku0dm89t2dtu22h61usi7e4q51.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "723416481584-46eh23ipj2m7hmvo5n4bbdpcfl53u73m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dinnerpartyapp.dinnerparty"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
