@@ -44,8 +44,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCyIpjquROx55onSykA1kekbqiPxmPzleI',
-    appId: '1:723416481584:web:648423cdbadcc9a9e212f5',
+    apiKey: 'AIzaSyB_16iwYSR4COua6i-qeptpq-n3OAQnU28',
+    appId: '1:723416481584:web:9c191d80918d0c42e212f5',
     messagingSenderId: '723416481584',
     projectId: 'dinnerparty-app',
     authDomain: 'dinnerparty-app-30e2a.firebaseapp.com',
@@ -53,7 +53,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBDgAkIkfpXv7ohPAi5rV4wQ1gXR906Rv0',
+    apiKey: 'AIzaSyBFWYvMmXbUPaoVPTpXQhK4XQllkpx0DaE',
     appId: '1:723416481584:android:418e7bfd15840d8ae212f5',
     messagingSenderId: '723416481584',
     projectId: 'dinnerparty-app',
@@ -61,22 +61,20 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBvBa31oc58Kl-JEQLugc3graPVSfA1J7o',
+    apiKey: 'AIzaSyAVl8aDtZ6n8Z57QCNJzy2W5hac2Wtpwrw',
     appId: '1:723416481584:ios:3072478ba40efea9e212f5',
     messagingSenderId: '723416481584',
     projectId: 'dinnerparty-app',
     storageBucket: 'dinnerparty-app.appspot.com',
-    iosClientId: '723416481584-46eh23ipj2m7hmvo5n4bbdpcfl53u73m.apps.googleusercontent.com',
     iosBundleId: 'com.dinnerpartyapp.dinnerparty',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBvBa31oc58Kl-JEQLugc3graPVSfA1J7o',
+    apiKey: 'AIzaSyAVl8aDtZ6n8Z57QCNJzy2W5hac2Wtpwrw',
     appId: '1:723416481584:ios:3072478ba40efea9e212f5',
     messagingSenderId: '723416481584',
     projectId: 'dinnerparty-app',
     storageBucket: 'dinnerparty-app.appspot.com',
-    iosClientId: '723416481584-46eh23ipj2m7hmvo5n4bbdpcfl53u73m.apps.googleusercontent.com',
     iosBundleId: 'com.dinnerpartyapp.dinnerparty',
   );
 }

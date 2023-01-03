@@ -14,28 +14,21 @@
       },
       "oauth_client": [
         {
-          "client_id": "723416481584-oos3jmku0dm89t2dtu22h61usi7e4q51.apps.googleusercontent.com",
+          "client_id": "723416481584-tpck24mabagu8e1omeuqao5jpfq3aknr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBDgAkIkfpXv7ohPAi5rV4wQ1gXR906Rv0"
+          "current_key": "AIzaSyBFWYvMmXbUPaoVPTpXQhK4XQllkpx0DaE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "723416481584-oos3jmku0dm89t2dtu22h61usi7e4q51.apps.googleusercontent.com",
+              "client_id": "723416481584-tpck24mabagu8e1omeuqao5jpfq3aknr.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "723416481584-46eh23ipj2m7hmvo5n4bbdpcfl53u73m.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.dinnerpartyapp.dinnerparty"
-              }
             }
           ]
         }
