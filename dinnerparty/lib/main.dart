@@ -1,3 +1,4 @@
+import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/firebase_options.dart';
 import 'package:dinnerparty/views/login_view.dart';
 import 'package:dinnerparty/views/register_view.dart';
@@ -17,9 +18,9 @@ void main() async {
       ),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegisterView(),
-        '/main/': (context) => const MainView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        homeRoute: (context) => const HomeView(),
       },
     ),
   );
@@ -40,7 +41,7 @@ class HomePage extends StatelessWidget {
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
               if (user.emailVerified) {
-                return const MainView();
+                return const HomeView();
               } else {
                 return const VerifyEmailView();
               }
@@ -57,14 +58,14 @@ class HomePage extends StatelessWidget {
 
 enum MenuAction { logout }
 
-class MainView extends StatefulWidget {
-  const MainView({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
   @override
-  State<MainView> createState() => _MainViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _MainViewState extends State<MainView> {
+class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +81,7 @@ class _MainViewState extends State<MainView> {
                     await FirebaseAuth.instance.signOut();
                     if (mounted) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/login/',
+                        loginRoute,
                         (Route<dynamic> route) => false,
                       );
                     }
