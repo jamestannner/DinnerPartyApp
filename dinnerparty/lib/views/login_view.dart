@@ -31,25 +31,29 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      TextField(
-        controller: _email,
-        enableSuggestions: false,
-        autocorrect: false,
-        keyboardType: TextInputType.emailAddress,
-        decoration: const InputDecoration(
-          hintText: 'Enter your email here',
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
       ),
-      TextField(
-          controller: _password,
-          obscureText: true,
+      body: Column(children: [
+        TextField(
+          controller: _email,
           enableSuggestions: false,
           autocorrect: false,
+          keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(
-            hintText: 'Enter your password here',
-          )),
-      TextButton(
+            hintText: 'Enter your email here',
+          ),
+        ),
+        TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'Enter your password here',
+            )),
+        TextButton(
           onPressed: () async {
             final email = _email.text;
             final password = _password.text;
@@ -68,7 +72,18 @@ class _LoginViewState extends State<LoginView> {
               }
             }
           },
-          child: const Text('Login'))
-    ]);
+          child: const Text('Login'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/register/',
+              (route) => false,
+            );
+          },
+          child: const Text('not registered yet? Register here!'),
+        ),
+      ]),
+    );
   }
 }
