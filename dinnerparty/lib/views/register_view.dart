@@ -1,7 +1,8 @@
 // import 'dart:developer' as devtools show log;
 import 'package:dinnerparty/constants/routes.dart';
+import 'package:dinnerparty/services/auth/auth_exceptions.dart';
+import 'package:dinnerparty/services/auth/auth_service.dart';
 import 'package:dinnerparty/utilities/show_error_dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatefulWidget {
@@ -60,41 +61,34 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email,
+                await AuthService.firebase().createUser(
+                  id: email,
                   password: password,
                 );
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
+                AuthService.firebase().sendVerificaion();
+                final user = AuthService.firebase().currentUser;
                 if (mounted) {
                   Navigator.of(context).pushNamed(verifyEmailRoute);
                 }
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  await showErrorDialog(
-                    context,
-                    'Weak password. Please use 6 or more characters.',
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  await showErrorDialog(
-                    context,
-                    'Email already in use. Try signing in.',
-                  );
-                } else if (e.code == 'invalid-email') {
-                  await showErrorDialog(
-                    context,
-                    'Invalid email. Check for typos and formatting',
-                  );
-                } else {
-                  await showErrorDialog(
-                    context,
-                    'Hmm... something went wrong.\nPlease try again.\nError: ${e.code}',
-                  );
-                }
-              } catch (e) {
+              } on WeakPasswordAuthException {
                 await showErrorDialog(
                   context,
-                  'Hmm... something went wrong.\nPlease try again\nError: ${e.toString()}',
+                  'Weak password. Please use 6 or more characters.',
+                );
+              } on EmailAlreadyInUseAuthException {
+                await showErrorDialog(
+                  context,
+                  'Email already in use. Try signing in.',
+                );
+              } on InvalidEmailAuthException {
+                await showErrorDialog(
+                  context,
+                  'Invalid email. Check for typos and formatting',
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  'Failed to register',
                 );
               }
             },

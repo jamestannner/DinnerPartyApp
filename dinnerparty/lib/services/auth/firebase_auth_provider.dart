@@ -1,17 +1,18 @@
+import 'package:dinnerparty/firebase_options.dart';
 import 'package:dinnerparty/services/auth/auth_exceptions.dart';
 import 'package:dinnerparty/services/auth/auth_provider.dart';
 import 'package:dinnerparty/services/auth/auth_user.dart';
 
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
+import 'package:firebase_core/firebase_core.dart';
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> createUser({
     required String id,
     required String password,
-  }) 
-  async {
+  }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: id,
@@ -41,18 +42,18 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
-    if (user != null)
+    if (user != null) {
       return AuthUser.fromFirebase(user);
-    else
+    } else {
       return null;
+    }
   }
 
   @override
   Future<AuthUser> logIn({
     required String id,
     required String password,
-  }) 
-  async {
+  }) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: id,
@@ -95,5 +96,12 @@ class FirebaseAuthProvider implements AuthProvider {
     } else {
       throw UserNotLoggedInAuthException();
     }
+  }
+
+  @override
+  Future<void> initialize() async {
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
 }
