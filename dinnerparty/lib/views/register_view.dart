@@ -66,7 +66,6 @@ class _RegisterViewState extends State<RegisterView> {
                   password: password,
                 );
                 AuthService.firebase().sendVerificaion();
-                final user = AuthService.firebase().currentUser;
                 if (mounted) {
                   Navigator.of(context).pushNamed(verifyEmailRoute);
                 }
