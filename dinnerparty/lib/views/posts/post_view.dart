@@ -32,8 +32,13 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Main UI'),
+        title: const Text('Posts View'),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(newPostRoute);
+              },
+              icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
@@ -76,7 +81,7 @@ class _HomeViewState extends State<HomeView> {
                       //   // TODO: Handle this case.
                       //   break;
                       default:
-                          return const CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                     }
                   }));
             default:

@@ -1,6 +1,7 @@
 import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
-import 'package:dinnerparty/views/home_view.dart';
+import 'package:dinnerparty/views/posts/new_post_view.dart';
+import 'package:dinnerparty/views/posts/post_view.dart';
 import 'package:dinnerparty/views/login_view.dart';
 import 'package:dinnerparty/views/register_view.dart';
 import 'package:dinnerparty/views/verify_email_view.dart';
@@ -21,6 +22,7 @@ void main() async {
         registerRoute: (context) => const RegisterView(),
         homeRoute: (context) => const HomeView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
+        newPostRoute: (context) => const NewPostView(),
       },
     ),
   );
