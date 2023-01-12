@@ -12,8 +12,16 @@ class PostsService {
 
   List<LocalDatabasePost> _posts = [];
 
+
+  // makes PostsService a singleton
+  static final PostsService _shared = PostsService._sharedInstance();
+  PostsService._sharedInstance();
+  factory PostsService() => _shared;
+
   final _postsStreamController =
       StreamController<List<LocalDatabasePost>>.broadcast();
+
+  Stream<List<LocalDatabasePost>> get allPosts => _postsStreamController.stream;
 
   Future<LocalDatabaseUser> getOrCreateUser({required String email}) async {
     try {
@@ -22,7 +30,7 @@ class PostsService {
     } on CouldNotFindUser {
       final createdUser = await createUser(email: email);
       return createdUser;
-    } 
+    }
   }
 
   Future<void> _cachePosts() async {
@@ -33,6 +41,7 @@ class PostsService {
 
   Future<LocalDatabasePost> updatePost(
       {required LocalDatabasePost post, required String text}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     await getPost(id: post.id);
@@ -53,6 +62,7 @@ class PostsService {
   }
 
   Future<Iterable<LocalDatabasePost>> getAllPosts() async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final posts = await db.query(
       localPostTable,
@@ -62,6 +72,7 @@ class PostsService {
   }
 
   Future<LocalDatabasePost> getPost({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final posts = await db.query(
       localPostTable,
@@ -82,6 +93,7 @@ class PostsService {
   }
 
   Future<int> deleteAllPosts() async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final numberOfDeletions = await db.delete(localPostTable);
     _posts = [];
@@ -90,6 +102,7 @@ class PostsService {
   }
 
   Future<void> deletePost({required int id}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(
       localPostTable,
@@ -106,6 +119,7 @@ class PostsService {
 
   Future<LocalDatabasePost> createPost(
       {required LocalDatabaseUser author}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
     // ensure that the author exists in the db with appropriate id
@@ -138,6 +152,8 @@ class PostsService {
   }
 
   Future<LocalDatabaseUser> getUser({required String email}) async {
+    await _ensureDbIsOpen();
+
     final db = _getDatabaseOrThrow();
 
     final results = await db.query(
@@ -155,6 +171,7 @@ class PostsService {
   }
 
   Future<LocalDatabaseUser> createUser({required String email}) async {
+    await _ensureDbIsOpen();
     email = email.toLowerCase();
     final db = _getDatabaseOrThrow();
     final results = await db.query(
@@ -173,6 +190,7 @@ class PostsService {
   }
 
   Future<void> deleteUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(
       localUserTable,
@@ -207,6 +225,14 @@ class PostsService {
       await _cachePosts();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
+    }
+  }
+
+  Future<void> _ensureDbIsOpen() async {
+    try {
+      await open();
+    } on DatabaseAlreadyOpenException {
+      //empty
     }
   }
 
@@ -288,7 +314,7 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
   PRIMARY KEY("id" AUTOINCREMENT)
 );''';
 
-const createPostTable = '''CREATE TABLE "post" (
+const createPostTable = '''CREATE TABLE IF NOT EXISTS "post" (
   "id"	INTEGER NOT NULL,
   "user_id"	INTEGER NOT NULL,
   "post"	TEXT,
