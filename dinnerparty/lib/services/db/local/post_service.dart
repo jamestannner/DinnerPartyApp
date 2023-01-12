@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dinnerparty/services/db/local/local_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -7,6 +9,27 @@ import 'package:path/path.dart' show join;
 
 class PostsService {
   Database? _db;
+
+  List<LocalDatabasePost> _posts = [];
+
+  final _postsStreamController =
+      StreamController<List<LocalDatabasePost>>.broadcast();
+
+  Future<LocalDatabaseUser> getOrCreateUser({required String email}) async {
+    try {
+      final user = await getUser(email: email);
+      return user;
+    } on CouldNotFindUser {
+      final createdUser = await createUser(email: email);
+      return createdUser;
+    } 
+  }
+
+  Future<void> _cachePosts() async {
+    final allPosts = await getAllPosts();
+    _posts = allPosts.toList();
+    _postsStreamController.add(_posts);
+  }
 
   Future<LocalDatabasePost> updatePost(
       {required LocalDatabasePost post, required String text}) async {
@@ -21,7 +44,11 @@ class PostsService {
     if (updatesCount == 0) {
       throw CouldNotUpdatePost();
     } else {
-      return await getPost(id: post.id);
+      final updatedPost = await getPost(id: post.id);
+      _posts.removeWhere((post) => post.id == updatedPost.id);
+      _posts.add(updatedPost);
+      _postsStreamController.add(_posts);
+      return updatedPost;
     }
   }
 
@@ -46,13 +73,20 @@ class PostsService {
     if (posts.isEmpty) {
       throw CouldNotFindPost();
     } else {
-      return LocalDatabasePost.fromRow(posts.first);
+      final post = LocalDatabasePost.fromRow(posts.first);
+      _posts.removeWhere((post) => post.id == id);
+      _posts.add(post);
+      _postsStreamController.add(_posts);
+      return post;
     }
   }
 
   Future<int> deleteAllPosts() async {
     final db = _getDatabaseOrThrow();
-    return await db.delete(localPostTable);
+    final numberOfDeletions = await db.delete(localPostTable);
+    _posts = [];
+    _postsStreamController.add(_posts);
+    return numberOfDeletions;
   }
 
   Future<void> deletePost({required int id}) async {
@@ -64,6 +98,9 @@ class PostsService {
     );
     if (deletedCount == 0) {
       throw CouldNotDeletePost();
+    } else {
+      _posts.removeWhere((post) => post.id == id);
+      _postsStreamController.add(_posts);
     }
   }
 
@@ -93,6 +130,9 @@ class PostsService {
       userId: author.id,
       post: postContent,
     );
+
+    _posts.add(post);
+    _postsStreamController.add(_posts);
 
     return post;
   }
@@ -164,6 +204,7 @@ class PostsService {
       await db.execute(createUserTable);
 
       await db.execute(createPostTable);
+      await _cachePosts();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentsDirectory();
     }
