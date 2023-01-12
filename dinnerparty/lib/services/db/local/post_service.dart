@@ -12,14 +12,17 @@ class PostsService {
 
   List<LocalDatabasePost> _posts = [];
 
-
   // makes PostsService a singleton
   static final PostsService _shared = PostsService._sharedInstance();
-  PostsService._sharedInstance();
+  PostsService._sharedInstance() {
+    _postsStreamController =
+        StreamController<List<LocalDatabasePost>>.broadcast(onListen: () {
+      _postsStreamController.sink.add(_posts);
+    });
+  }
   factory PostsService() => _shared;
 
-  final _postsStreamController =
-      StreamController<List<LocalDatabasePost>>.broadcast();
+  late final StreamController<List<LocalDatabasePost>> _postsStreamController;
 
   Stream<List<LocalDatabasePost>> get allPosts => _postsStreamController.stream;
 
@@ -166,7 +169,7 @@ class PostsService {
     if (results.isEmpty) {
       throw CouldNotFindUser();
     } else {
-      return LocalDatabaseUser.fromRow(results.first);
+      return LocalDatabaseUser.fromRow(results.first, );
     }
   }
 
@@ -258,7 +261,7 @@ class LocalDatabaseUser {
 
   LocalDatabaseUser.fromRow(Map<String, Object?> map)
       : id = map[idColumn] as int,
-        email = map[""] as String;
+        email = map[emailColumn] as String;
 
   @override
   String toString() =>

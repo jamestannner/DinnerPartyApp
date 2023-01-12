@@ -23,12 +23,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
-  void dispose() {
-    _postsService.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +70,19 @@ class _HomeViewState extends State<HomeView> {
                   builder: ((context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
-                        return const Text("waiting for all posts...");
+                      case ConnectionState.active:
+                        if (snapshot.hasData) {
+                          final allNotes =
+                              snapshot.data as List<LocalDatabasePost>;
+                          return ListView.builder(
+                            itemCount: allNotes.length,
+                            itemBuilder: ((context, index) {
+                              return const Text('post');
+                            }),
+                          );
+                        } else {
+                          return const Text('no posts');
+                        }
                       // case ConnectionState.done:
                       //   // TODO: Handle this case.
                       //   break;
@@ -85,7 +91,7 @@ class _HomeViewState extends State<HomeView> {
                     }
                   }));
             default:
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
           }
         }),
       ),
