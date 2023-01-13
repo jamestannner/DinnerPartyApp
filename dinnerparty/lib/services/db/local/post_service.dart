@@ -33,6 +33,8 @@ class PostsService {
     } on CouldNotFindUser {
       final createdUser = await createUser(email: email);
       return createdUser;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -42,8 +44,10 @@ class PostsService {
     _postsStreamController.add(_posts);
   }
 
-  Future<LocalDatabasePost> updatePost(
-      {required LocalDatabasePost post, required String text}) async {
+  Future<LocalDatabasePost> updatePost({
+    required LocalDatabasePost post,
+    required String text,
+  }) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
@@ -67,9 +71,7 @@ class PostsService {
   Future<Iterable<LocalDatabasePost>> getAllPosts() async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    final posts = await db.query(
-      localPostTable,
-    );
+    final posts = await db.query(localPostTable);
 
     return posts.map((postRow) => LocalDatabasePost.fromRow(postRow));
   }
@@ -169,7 +171,7 @@ class PostsService {
     if (results.isEmpty) {
       throw CouldNotFindUser();
     } else {
-      return LocalDatabaseUser.fromRow(results.first, );
+      return LocalDatabaseUser.fromRow(results.first);
     }
   }
 
@@ -181,7 +183,7 @@ class PostsService {
       localUserTable,
       limit: 1,
       where: 'email = ?',
-      whereArgs: [email.toLowerCase()],
+      whereArgs: [email],
     );
     if (results.isNotEmpty) {
       throw UserAlreadyExists();
@@ -208,7 +210,7 @@ class PostsService {
   Database _getDatabaseOrThrow() {
     final db = _db;
     if (db == null) {
-      throw DatabaseIsnotOpen();
+      throw DatabaseIsNotOpen();
     } else {
       return db;
     }
@@ -242,7 +244,7 @@ class PostsService {
   Future<void> close() async {
     final db = _db;
     if (db == null) {
-      throw DatabaseIsnotOpen();
+      throw DatabaseIsNotOpen();
     } else {
       await db.close();
       _db = null;

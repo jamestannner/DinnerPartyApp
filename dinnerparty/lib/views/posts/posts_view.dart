@@ -2,6 +2,8 @@ import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/enums/menu_action.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
 import 'package:dinnerparty/services/db/local/post_service.dart';
+import 'package:dinnerparty/utilities/dialogs/logout_dialog.dart';
+import 'package:dinnerparty/views/posts/posts_list_view.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -13,7 +15,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final PostsService _postsService;
-
   String get userId => AuthService.firebase().currentUser!.id!;
 
   @override
@@ -29,10 +30,11 @@ class _HomeViewState extends State<HomeView> {
         title: const Text('Posts View'),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(newPostRoute);
-              },
-              icon: const Icon(Icons.add)),
+            onPressed: () {
+              Navigator.of(context).pushNamed(newPostRoute);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
@@ -43,15 +45,15 @@ class _HomeViewState extends State<HomeView> {
                     if (mounted) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         loginRoute,
-                        (Route<dynamic> route) => false,
+                        (_) => false,
                       );
                     }
                   }
               }
             },
             itemBuilder: (context) {
-              return [
-                const PopupMenuItem<MenuAction>(
+              return const [
+                PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Log out'),
                 )
@@ -66,30 +68,28 @@ class _HomeViewState extends State<HomeView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               return StreamBuilder(
-                  stream: _postsService.allPosts,
-                  builder: ((context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        if (snapshot.hasData) {
-                          final allNotes =
-                              snapshot.data as List<LocalDatabasePost>;
-                          return ListView.builder(
-                            itemCount: allNotes.length,
-                            itemBuilder: ((context, index) {
-                              return const Text('post');
-                            }),
-                          );
-                        } else {
-                          return const Text('no posts');
-                        }
-                      // case ConnectionState.done:
-                      //   // TODO: Handle this case.
-                      //   break;
-                      default:
+                stream: _postsService.allPosts,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.active:
+                      if (snapshot.hasData) {
+                        final allPosts =
+                            snapshot.data as List<LocalDatabasePost>;
+                        return PostsListView(
+                          posts: allPosts,
+                          onDeletePost: (post) async {
+                            await _postsService.deletePost(id: post.id);
+                          },
+                        );
+                      } else {
                         return const CircularProgressIndicator();
-                    }
-                  }));
+                      }
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
+              );
             default:
               return const CircularProgressIndicator();
           }
@@ -97,27 +97,4 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-}
-
-Future<bool> showLogoutDialog(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-          title: const Text('Sign out'),
-          content: const Text('Are you sure you want to sign out?'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text('Cancel')),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text('Log out')),
-          ]);
-    },
-  ).then(((value) => value ?? false));
 }

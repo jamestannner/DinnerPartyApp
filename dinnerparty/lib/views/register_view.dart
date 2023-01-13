@@ -2,7 +2,7 @@
 import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/services/auth/auth_exceptions.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
-import 'package:dinnerparty/utilities/show_error_dialog.dart';
+import 'package:dinnerparty/utilities/dialogs/error_dialog.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatefulWidget {
