@@ -15,3 +15,5 @@ class CouldNotDeletePost implements Exception {}
 class CouldNotFindPost implements Exception {}
 
 class CouldNotUpdatePost implements Exception {}
+
+class UserShouldBeSetBeforeReadingAllPosts implements Exception {}

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dinnerparty/extensions/list/filter.dart';
 import 'package:dinnerparty/services/db/local/local_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,6 +12,8 @@ class PostsService {
   Database? _db;
 
   List<LocalDatabasePost> _posts = [];
+
+  LocalDatabaseUser? _user;
 
   // makes PostsService a singleton
   static final PostsService _shared = PostsService._sharedInstance();
@@ -24,14 +27,31 @@ class PostsService {
 
   late final StreamController<List<LocalDatabasePost>> _postsStreamController;
 
-  Stream<List<LocalDatabasePost>> get allPosts => _postsStreamController.stream;
+  Stream<List<LocalDatabasePost>> get allPosts =>
+      _postsStreamController.stream.filter((post) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return post.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetBeforeReadingAllPosts();
+        }
+      });
 
-  Future<LocalDatabaseUser> getOrCreateUser({required String email}) async {
+  Future<LocalDatabaseUser> getOrCreateUser({
+    required String email,
+    bool setAsCurrentUser = true,
+  }) async {
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentUser) {
+        _user = user;
+      }
       return user;
     } on CouldNotFindUser {
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser) {
+        _user = createdUser;
+      }
       return createdUser;
     } catch (e) {
       rethrow;
@@ -53,9 +73,14 @@ class PostsService {
 
     await getPost(id: post.id);
 
-    final updatesCount = await db.update(localPostTable, {
-      postColumn: text,
-    });
+    final updatesCount = await db.update(
+      localPostTable,
+      {
+        postColumn: text,
+      },
+      where: 'id = ?',
+      whereArgs: [post.id],
+    );
 
     if (updatesCount == 0) {
       throw CouldNotUpdatePost();
