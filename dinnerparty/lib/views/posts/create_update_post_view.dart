@@ -1,15 +1,16 @@
 import 'package:dinnerparty/services/auth/auth_service.dart';
 import 'package:dinnerparty/services/db/local/post_service.dart';
+import 'package:dinnerparty/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
 
-class NewPostView extends StatefulWidget {
-  const NewPostView({super.key});
+class CreateUpdatePostView extends StatefulWidget {
+  const CreateUpdatePostView({super.key});
 
   @override
-  State<NewPostView> createState() => _NewPostViewState();
+  State<CreateUpdatePostView> createState() => _CreateUpdatePostViewState();
 }
 
-class _NewPostViewState extends State<NewPostView> {
+class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
   LocalDatabasePost? _post;
   late final PostsService _postsService;
   late final TextEditingController _textController;
@@ -36,7 +37,17 @@ class _NewPostViewState extends State<NewPostView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<LocalDatabasePost> createNewPost() async {
+  Future<LocalDatabasePost> createOrGetExistingNote(
+    BuildContext buildContext,
+  ) async {
+    final widgetPost = context.getArgument<LocalDatabasePost>();
+
+    if (widgetPost != null) {
+      _post = widgetPost;
+      _textController.text = widgetPost.post;
+      return widgetPost;
+    }
+
     final existingPost = _post;
     if (existingPost != null) {
       return existingPost;
@@ -44,7 +55,9 @@ class _NewPostViewState extends State<NewPostView> {
       final currentUser = AuthService.firebase().currentUser!;
       final id = currentUser.id!;
       final owner = await _postsService.getUser(email: id);
-      return await _postsService.createPost(author: owner);
+      final newPost = await _postsService.createPost(author: owner);
+      _post = newPost;
+      return newPost;
     }
   }
 
@@ -81,20 +94,18 @@ class _NewPostViewState extends State<NewPostView> {
         title: const Text('New Post'),
       ),
       body: FutureBuilder(
-        future: createNewPost(),
+        future: createOrGetExistingNote(context), 
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _post = snapshot.data as LocalDatabasePost;
               _setupTextControllerListener();
               return TextField(
-                controller: _textController,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'Start typing your note here...',
-                )
-              );
+                  controller: _textController,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Start typing your note here...',
+                  ));
             default:
               return const CircularProgressIndicator();
           }

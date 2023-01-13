@@ -31,7 +31,9 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(newPostRoute);
+              Navigator.of(context).pushNamed(
+                createOrUpdatePostRoute,
+              );
             },
             icon: const Icon(Icons.add),
           ),
@@ -80,6 +82,12 @@ class _HomeViewState extends State<HomeView> {
                           posts: allPosts,
                           onDeletePost: (post) async {
                             await _postsService.deletePost(id: post.id);
+                          },
+                          onTap: (post) {
+                            Navigator.of(context).pushNamed(
+                              createOrUpdatePostRoute,
+                              arguments: post,
+                            );
                           },
                         );
                       } else {

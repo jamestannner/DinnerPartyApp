@@ -2,16 +2,18 @@ import 'package:dinnerparty/services/db/local/post_service.dart';
 import 'package:dinnerparty/utilities/dialogs/delete_dialog.dart';
 import 'package:flutter/material.dart';
 
-typedef DeletePostCallback = void Function(LocalDatabasePost post);
+typedef PostCallback = void Function(LocalDatabasePost post);
 
 class PostsListView extends StatelessWidget {
   final List<LocalDatabasePost> posts;
-  final DeletePostCallback onDeletePost;
+  final PostCallback onDeletePost;
+  final PostCallback onTap;
 
   const PostsListView({
     super.key,
     required this.posts,
     required this.onDeletePost,
+    required this.onTap,
   });
 
   @override
@@ -21,6 +23,9 @@ class PostsListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final thisPost = posts[index];
         return ListTile(
+          onTap: () {
+            onTap(thisPost);
+          },
           title: Text(
             thisPost.post,
             maxLines: 1,
