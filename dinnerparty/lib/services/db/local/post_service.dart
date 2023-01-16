@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dinnerparty/extensions/list/filter.dart';
-import 'package:dinnerparty/services/db/local/local_exceptions.dart';
+import 'package:dinnerparty/services/db/local/local_storage_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'

@@ -53,7 +53,7 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
       return existingPost;
     } else {
       final currentUser = AuthService.firebase().currentUser!;
-      final id = currentUser.id!;
+      final id = currentUser.email;
       final owner = await _postsService.getUser(email: id);
       final newPost = await _postsService.createPost(author: owner);
       _post = newPost;

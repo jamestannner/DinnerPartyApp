@@ -15,7 +15,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final PostsService _postsService;
-  String get userId => AuthService.firebase().currentUser!.id!;
+  String get userId => AuthService.firebase().currentUser!.email;
 
   @override
   void initState() {
