@@ -1,5 +1,6 @@
 import 'package:dinnerparty/services/auth/auth_service.dart';
-import 'package:dinnerparty/services/db/local/post_service.dart';
+import 'package:dinnerparty/services/db/cloud/cloud_post.dart';
+import 'package:dinnerparty/services/db/cloud/firebase_cloud_storage.dart';
 import 'package:dinnerparty/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
 
@@ -11,14 +12,14 @@ class CreateUpdatePostView extends StatefulWidget {
 }
 
 class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
-  LocalDatabasePost? _post;
-  late final PostsService _postsService;
+  CloudPost? _post;
+  late final FirebaseCloudStorage _postsService;
   late final TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
-    _postsService = PostsService();
+    _postsService = FirebaseCloudStorage();
     _textController = TextEditingController();
   }
 
@@ -27,7 +28,7 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
     if (post == null) return;
     final text = _textController.text;
     await _postsService.updatePost(
-      post: post,
+      documentId: post.documentId,
       text: text,
     );
   }
@@ -37,14 +38,14 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<LocalDatabasePost> createOrGetExistingNote(
+  Future<CloudPost> createOrGetExistingNote(
     BuildContext buildContext,
   ) async {
-    final widgetPost = context.getArgument<LocalDatabasePost>();
+    final widgetPost = context.getArgument<CloudPost>();
 
     if (widgetPost != null) {
       _post = widgetPost;
-      _textController.text = widgetPost.post;
+      _textController.text = widgetPost.text;
       return widgetPost;
     }
 
@@ -53,9 +54,8 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
       return existingPost;
     } else {
       final currentUser = AuthService.firebase().currentUser!;
-      final id = currentUser.email;
-      final owner = await _postsService.getUser(email: id);
-      final newPost = await _postsService.createPost(author: owner);
+      final userId = currentUser.id;
+      final newPost = await _postsService.createNewPost(ownerUserId: userId);
       _post = newPost;
       return newPost;
     }
@@ -64,7 +64,7 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
   void _deletePostIfTextIsEmpty() {
     final post = _post;
     if (_textController.text.isEmpty && post != null) {
-      _postsService.deletePost(id: post.id);
+      _postsService.deletePost(documentId: post.documentId);
     }
   }
 
@@ -73,7 +73,7 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
     final text = _textController.text;
     if (_textController.text.isNotEmpty && post != null) {
       _postsService.updatePost(
-        post: post,
+        documentId: post.documentId,
         text: text,
       );
     }
@@ -94,7 +94,7 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
         title: const Text('New Post'),
       ),
       body: FutureBuilder(
-        future: createOrGetExistingNote(context), 
+        future: createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:

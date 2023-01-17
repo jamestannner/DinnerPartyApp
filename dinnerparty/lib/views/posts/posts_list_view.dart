@@ -1,11 +1,11 @@
-import 'package:dinnerparty/services/db/local/post_service.dart';
+import 'package:dinnerparty/services/db/cloud/cloud_post.dart';
 import 'package:dinnerparty/utilities/dialogs/delete_dialog.dart';
 import 'package:flutter/material.dart';
 
-typedef PostCallback = void Function(LocalDatabasePost post);
+typedef PostCallback = void Function(CloudPost post);
 
 class PostsListView extends StatelessWidget {
-  final List<LocalDatabasePost> posts;
+  final Iterable<CloudPost> posts;
   final PostCallback onDeletePost;
   final PostCallback onTap;
 
@@ -21,13 +21,13 @@ class PostsListView extends StatelessWidget {
     return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {
-        final thisPost = posts[index];
+        final thisPost = posts.elementAt(index);
         return ListTile(
           onTap: () {
             onTap(thisPost);
           },
           title: Text(
-            thisPost.post,
+            thisPost.text,
             maxLines: 1,
             softWrap: true,
             overflow: TextOverflow.ellipsis,

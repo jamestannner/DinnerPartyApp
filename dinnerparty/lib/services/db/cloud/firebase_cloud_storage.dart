@@ -38,26 +38,24 @@ class FirebaseCloudStorage {
           )
           .get()
           .then(
-        (value) {
-          return value.docs.map((doc) {
-            return CloudPost(
-              documentId: doc.id,
-              ownerUserId: doc.data()[ownerUserIdFieldName] as String,
-              text: doc.data()[textFieldName] as String,
-            );
-          });
-        },
-      );
+            (value) => value.docs.map((doc) => CloudPost.fromSnapshot(doc)),
+          );
     } catch (e) {
       throw CouldNotGetAllPostsException();
     }
   }
 
-  void createNewPost({required String ownerUserId}) async {
-    await posts.add({
+  Future<CloudPost> createNewPost({required String ownerUserId}) async {
+    final document = await posts.add({
       ownerUserIdFieldName: ownerUserId,
       textFieldName: '',
     });
+    final fetchedPost = await document.get();
+    return CloudPost(
+      documentId: fetchedPost.id,
+      ownerUserId: ownerUserId,
+      text: '',
+    );
   }
 
   // singleton
