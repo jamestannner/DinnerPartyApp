@@ -3,7 +3,6 @@ import 'package:dinnerparty/enums/menu_action.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
 import 'package:dinnerparty/services/db/cloud/cloud_post.dart';
 import 'package:dinnerparty/services/db/cloud/firebase_cloud_storage.dart';
-import 'package:dinnerparty/services/db/local/post_service.dart';
 import 'package:dinnerparty/utilities/dialogs/logout_dialog.dart';
 import 'package:dinnerparty/views/posts/posts_list_view.dart';
 import 'package:flutter/material.dart';

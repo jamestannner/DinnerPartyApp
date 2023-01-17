@@ -1,8 +1,10 @@
 import 'package:dinnerparty/services/auth/auth_service.dart';
 import 'package:dinnerparty/services/db/cloud/cloud_post.dart';
 import 'package:dinnerparty/services/db/cloud/firebase_cloud_storage.dart';
+import 'package:dinnerparty/utilities/dialogs/cannot_share_empty_dialog.dart';
 import 'package:dinnerparty/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CreateUpdatePostView extends StatefulWidget {
   const CreateUpdatePostView({super.key});
@@ -92,6 +94,19 @@ class _CreateUpdatePostViewState extends State<CreateUpdatePostView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('New Post'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              if (_post == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+              } else {
+                Share.share(text);
+              }
+            },
+            icon: const Icon(Icons.share),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: createOrGetExistingNote(context),
