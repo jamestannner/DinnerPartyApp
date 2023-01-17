@@ -1,11 +1,15 @@
 import 'package:dinnerparty/constants/routes.dart';
-import 'package:dinnerparty/services/auth/auth_service.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_bloc.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_event.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_state.dart';
+import 'package:dinnerparty/services/auth/firebase_auth_provider.dart';
 import 'package:dinnerparty/views/posts/create_update_post_view.dart';
 import 'package:dinnerparty/views/posts/posts_view.dart';
 import 'package:dinnerparty/views/login_view.dart';
 import 'package:dinnerparty/views/register_view.dart';
 import 'package:dinnerparty/views/verify_email_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'dart:developer' as devtools show log;
 
 void main() async {
@@ -16,7 +20,10 @@ void main() async {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: const HomePage(),
+      home: BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(FirebaseAuthProvider()),
+        child: const HomePage(),
+      ),
       routes: {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
@@ -33,25 +40,19 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: AuthService.firebase().initialize(),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.done:
-            final user = AuthService.firebase().currentUser;
-            if (user != null) {
-              if (user.isUserVerified) {
-                return const HomeView();
-              } else {
-                return const VerifyEmailView();
-              }
-            } else {
-              return const LoginView();
-            }
-          default:
-            return const CircularProgressIndicator();
-        }
-      },
-    );
+    context.read<AuthBloc>().add(const AuthEventInitialize());
+    return BlocBuilder<AuthBloc, AuthState>(builder: ((context, state) {
+      if (state is AuthStateLoggedIn) {
+        return const HomeView();
+      } else if (state is AuthStateNeedsVerification) {
+        return const VerifyEmailView();
+      } else if (state is AuthStateLoggedOut) {
+        return const LoginView();
+      } else {
+        return const Scaffold(
+          body: CircularProgressIndicator(),
+        );
+      }
+    }));
   }
 }

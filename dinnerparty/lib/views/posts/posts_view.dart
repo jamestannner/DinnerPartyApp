@@ -1,11 +1,14 @@
 import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/enums/menu_action.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_bloc.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_event.dart';
 import 'package:dinnerparty/services/db/cloud/cloud_post.dart';
 import 'package:dinnerparty/services/db/cloud/firebase_cloud_storage.dart';
 import 'package:dinnerparty/utilities/dialogs/logout_dialog.dart';
 import 'package:dinnerparty/views/posts/posts_list_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -43,14 +46,10 @@ class _HomeViewState extends State<HomeView> {
               switch (value) {
                 case MenuAction.logout:
                   final shouldLogout = await showLogoutDialog(context);
-                  if (shouldLogout) {
-                    await AuthService.firebase().logOut();
-                    if (mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        loginRoute,
-                        (_) => false,
-                      );
-                    }
+                  if (shouldLogout && mounted) {
+                    context.read<AuthBloc>().add(
+                      const AuthEventLogOut()
+                    );
                   }
               }
             },
