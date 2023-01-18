@@ -1,6 +1,9 @@
 import 'package:dinnerparty/constants/routes.dart';
 import 'package:dinnerparty/services/auth/auth_service.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_bloc.dart';
+import 'package:dinnerparty/services/auth/bloc/auth_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'dart:developer' as devtools show log;
 
 class VerifyEmailView extends StatefulWidget {
@@ -21,20 +24,18 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         children: [
           const Text('Please verify your email address:'),
           TextButton(
-            onPressed: () async {
-              await AuthService.firebase().sendVerificaion();
+            onPressed: () {
+              context.read<AuthBloc>().add(
+                    const AuthEventSendEmailVerification(),
+                  );
             },
             child: const Text('Click to resend email verification'),
           ),
           TextButton(
             onPressed: () async {
-              await AuthService.firebase().logOut();
-              if (mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  registerRoute,
-                  (route) => false,
-                );
-              }
+              context.read<AuthBloc>().add(
+                    const AuthEventLogOut(),
+                  );
             },
             child: const Text('Reset'),
           ),
