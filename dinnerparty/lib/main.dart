@@ -14,13 +14,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'dart:developer' as devtools show log;
 
+Map<int, Color> color = {
+  50: const Color.fromRGBO(248, 122, 38, .1),
+  100: const Color.fromRGBO(248, 122, 38, .2),
+  200: const Color.fromRGBO(248, 122, 38, .3),
+  300: const Color.fromRGBO(248, 122, 38, .4),
+  400: const Color.fromRGBO(248, 122, 38, .5),
+  500: const Color.fromRGBO(248, 122, 38, .6),
+  600: const Color.fromRGBO(248, 122, 38, .7),
+  700: const Color.fromRGBO(248, 122, 38, .8),
+  800: const Color.fromRGBO(248, 122, 38, .9),
+  900: const Color.fromRGBO(248, 122, 38, 1),
+};
+
+MaterialColor customColor = MaterialColor(0xFFF87A26, color);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: customColor,
       ),
       home: BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(FirebaseAuthProvider()),
