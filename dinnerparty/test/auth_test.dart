@@ -69,6 +69,12 @@ void main() {
       final user = provider.currentUser;
       expect(user, isNotNull);
     });
+    test('Cannot send password reset if user does not exist', () async {
+      expect(
+        provider.sendPasswordReset(toEmail: 'foo@bar.com'),
+        throwsA(const TypeMatcher<Exception>()),
+      );
+    });
   });
 }
 
@@ -144,5 +150,13 @@ class MockAuthProvider implements AuthProvider {
       id: 'myID',
     );
     _user = newUser;
+  }
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) async {
+    if (toEmail == 'foo@bar.com') {
+      throw GenericAuthException();
+    }
+    return;
   }
 }

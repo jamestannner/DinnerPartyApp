@@ -4,6 +4,7 @@ import 'package:dinnerparty/services/auth/bloc/auth_bloc.dart';
 import 'package:dinnerparty/services/auth/bloc/auth_event.dart';
 import 'package:dinnerparty/services/auth/bloc/auth_state.dart';
 import 'package:dinnerparty/services/auth/firebase_auth_provider.dart';
+import 'package:dinnerparty/views/forgot_password_view.dart';
 import 'package:dinnerparty/views/posts/create_update_post_view.dart';
 import 'package:dinnerparty/views/posts/posts_view.dart';
 import 'package:dinnerparty/views/login_view.dart';
@@ -57,6 +58,8 @@ class HomePage extends StatelessWidget {
             return const LoginView();
           } else if (state is AuthStateRegistering) {
             return const RegisterView();
+          } else if (state is AuthStateForgotPassword) {
+            return const ForgotPasswordView();
           } else {
             return const Scaffold(
               body: CircularProgressIndicator(),
