@@ -1,6 +1,6 @@
-import 'package:dinnerparty/services/auth/auth_exceptions.dart';
-import 'package:dinnerparty/services/auth/auth_provider.dart';
-import 'package:dinnerparty/services/auth/auth_user.dart';
+import 'package:dinnerparty/modules/authentication/data/auth_exceptions.dart';
+import 'package:dinnerparty/modules/authentication/data/auth_provider.dart';
+import 'package:dinnerparty/modules/authentication/data/auth_user.dart';
 import 'package:test/test.dart';
 
 void main() {

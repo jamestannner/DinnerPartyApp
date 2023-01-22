@@ -1,39 +1,39 @@
-import 'package:dinnerparty/constants/routes.dart';
-import 'package:dinnerparty/helpers/loading/loading_screen.dart';
-import 'package:dinnerparty/services/auth/bloc/auth_bloc.dart';
-import 'package:dinnerparty/services/auth/bloc/auth_event.dart';
-import 'package:dinnerparty/services/auth/bloc/auth_state.dart';
-import 'package:dinnerparty/services/auth/firebase_auth_provider.dart';
-import 'package:dinnerparty/views/forgot_password_view.dart';
-import 'package:dinnerparty/views/posts/create_update_post_view.dart';
-import 'package:dinnerparty/views/posts/posts_view.dart';
-import 'package:dinnerparty/views/login_view.dart';
-import 'package:dinnerparty/views/register_view.dart';
-import 'package:dinnerparty/views/verify_email_view.dart';
+import 'package:dinnerparty/components/loading_screen.dart';
+import 'package:dinnerparty/config/routes.dart';
+import 'package:dinnerparty/modules/authentication/bloc/auth_bloc.dart';
+import 'package:dinnerparty/modules/authentication/bloc/auth_event.dart';
+import 'package:dinnerparty/modules/authentication/bloc/auth_state.dart';
+import 'package:dinnerparty/modules/authentication/data/firebase_auth_provider.dart';
+import 'package:dinnerparty/modules/authentication/ui/forgot_password_view.dart';
+import 'package:dinnerparty/modules/authentication/ui/login_view.dart';
+import 'package:dinnerparty/modules/authentication/ui/register_view.dart';
+import 'package:dinnerparty/modules/authentication/ui/verify_email_view.dart';
+import 'package:dinnerparty/modules/posts/ui/create_update_post_view.dart';
+import 'package:dinnerparty/modules/posts/ui/posts_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'dart:developer' as devtools show log;
 
 Map<int, Color> color = {
-  50: const Color.fromRGBO(248, 122, 38, .1),
-  100: const Color.fromRGBO(248, 122, 38, .2),
-  200: const Color.fromRGBO(248, 122, 38, .3),
-  300: const Color.fromRGBO(248, 122, 38, .4),
-  400: const Color.fromRGBO(248, 122, 38, .5),
-  500: const Color.fromRGBO(248, 122, 38, .6),
-  600: const Color.fromRGBO(248, 122, 38, .7),
-  700: const Color.fromRGBO(248, 122, 38, .8),
-  800: const Color.fromRGBO(248, 122, 38, .9),
-  900: const Color.fromRGBO(248, 122, 38, 1),
+  50: const Color.fromRGBO(245, 133, 63, .1),
+  100: const Color.fromRGBO(245, 133, 63, .2),
+  200: const Color.fromRGBO(245, 133, 63, .3),
+  300: const Color.fromRGBO(245, 133, 63, .4),
+  400: const Color.fromRGBO(245, 133, 63, .5),
+  500: const Color.fromRGBO(245, 133, 63, .6),
+  600: const Color.fromRGBO(245, 133, 63, .7),
+  700: const Color.fromRGBO(245, 133, 63, .8),
+  800: const Color.fromRGBO(245, 133, 63, .9),
+  900: const Color.fromRGBO(245, 133, 63, 1),
 };
 
-MaterialColor customColor = MaterialColor(0xFFF87A26, color);
+MaterialColor customColor = MaterialColor(0xFFF5853F, color);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
-      title: 'Flutter Demo',
+      title: 'DinnerParty',
       theme: ThemeData(
         primarySwatch: customColor,
       ),
